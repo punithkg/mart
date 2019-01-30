@@ -88,6 +88,20 @@ public class Parser {
   }
 
   /**
+   * Return a Sql query in translated dialect.
+   * @param sql String containing the SQL query
+   * @param from SQL dialect of the source.
+   * @param to SQL dialect to use.
+   * @return SqlNode as Root of the parse tree
+   * @throws SqlParseException A parse exception if parsing fails
+   */
+  public String translate(String sql, SqlDialect from, SqlDialect to)
+          throws SqlParseException {
+    //Todo: Implement translate
+    return sql;
+  }
+
+  /**
    * Create a query digest by replacing all constants.
    * @param sql SQL Query
    * @param dialect SQL dialect to use. For e.g. MySQL

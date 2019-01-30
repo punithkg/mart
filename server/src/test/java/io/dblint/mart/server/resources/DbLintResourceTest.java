@@ -16,6 +16,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -106,6 +108,20 @@ public class DbLintResourceTest {
             "WHERE `I` = 5", response.sql);
     assertTrue(response.success);
     assertNull(response.errorMessage);
+    RESOURCE.after();
+  }
+
+  @Test
+  public void callTranslateTest() throws Throwable {
+    RESOURCE.before();
+    final SqlQuery sql = new SqlQuery("select a from where i = 5");
+    final Optional<String> from = Optional.of("redshift");
+    final Optional<String> to = Optional.of("mysql");
+    QueryResponse response = RESOURCE.target("/api/dblint/translate")
+            .queryParam("sql", sql.sql)
+            .queryParam("from", from.get())
+            .queryParam("to", to.get()).request().get().readEntity(QueryResponse.class);
+    assertEquals(sql.sql, response.sql);
     RESOURCE.after();
   }
 

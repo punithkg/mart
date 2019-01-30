@@ -12,6 +12,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 @Path("/api/dblint/")
@@ -68,5 +69,27 @@ public class DbLintResource {
   @Metered
   public GitState version() {
     return gitState;
+  }
+
+  /**
+   * Return a Sql query in translated dialect.
+   * @param sql SqlQuery object with SQL string and other properties
+   * @param from Original dialect of the Query
+   * @param to Final dialect of the Query
+   * @return Query in translated dialect
+   */
+  @GET
+  @Path("/translate")
+  @Metered
+  @ExceptionMetered
+  public QueryResponse translate(@QueryParam("sql") SqlQuery sql,
+                                 @QueryParam("from") SqlDialect from,
+                                 @QueryParam("to") SqlDialect to) {
+    try {
+      String translatedQuery = parser.translate(sql.sql, from, to);
+      return new QueryResponse(translatedQuery, true);
+    } catch (Exception exc) {
+      return new QueryResponse(exc.getMessage(), false);
+    }
   }
 }
